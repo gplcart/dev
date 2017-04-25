@@ -35,24 +35,6 @@ class Dev extends Module
     }
 
     /**
-     * Module info
-     * @return array
-     */
-    public function info()
-    {
-        return array(
-            'name' => 'Dev',
-            'version' => '1.0.0-dev',
-            'description' => 'A set of tools to make developing GPL Cart sites easier',
-            'author' => 'Iurii Makukh ',
-            'core' => '1.x',
-            'license' => 'GPL-3.0+',
-            'configure' => 'admin/module/settings/dev',
-            'settings' => array('key' => '', 'status' => false)
-        );
-    }
-
-    /**
      * Implements hook "construct"
      */
     public function hookConstruct()
