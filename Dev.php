@@ -39,7 +39,6 @@ class Dev extends Module
      */
     public function hookConstruct()
     {
-        // Load KINT library asap
         require __DIR__ . '/vendor/kint-php/kint/init.php';
     }
 
@@ -113,7 +112,7 @@ class Dev extends Module
     public function hookRouteList(array &$routes)
     {
         $routes['admin/module/settings/dev'] = array(
-            'access' => 'module_edit',
+            'access' => '__superadmin',
             'handlers' => array(
                 'controller' => array('gplcart\\modules\\dev\\controllers\\Settings', 'editSettings')
             )
