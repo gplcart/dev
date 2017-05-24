@@ -7,28 +7,38 @@
  */
 ?>
 <div id="dev-module-toolbar">
-  <div class="summary">
-    <div class="column queries">
+  <div class="row summary hidden-xs">
+    <div class="col-md-6 queries">
       SQL queries: <b><?php echo count($queries); ?></b> Execution time: <b><?php echo $time; ?>sec</b>
     </div>
-    <div class="column pagespeed"></div>
+    <div class="col-md-3 validator">
+      Validator errors: <span class="result error">0</span>, warnings: <span class="result warning">0</span>
+    </div>
+    <div class="col-md-3 pagespeed">
+      <?php if (empty($key)) { ?>
+      PageSpeed Insights is not configured
+      <?php } ?>
+      <span class="fa fa-bars toggler"></span>
+    </div>
   </div>
-  <div class="details">
-    <div class="left column queries">
-      <ul>
+  <div class="row details small hidden-xs">
+    <div class="queries col-md-6">
+      <ul class="scroll">
         <?php foreach ($queries as $query) { ?>
         <li class="small"><?php echo htmlspecialchars($query, ENT_QUOTES, 'UTF-8'); ?></li>
         <?php } ?>
       </ul>
     </div>
-    <div class="right column pagespeed">
-      <div class="column resources"></div>
-      <div class="column suggestions"></div>
+    <div class="col-md-3 validator">
+      <div class="results scroll">No results</div>
+    </div>
+    <div class="col-md-3 pagespeed">
+      <div class="resources"></div>
+      <div class="suggestions"></div>
     </div>
   </div>
 </div>
-<script>
-
+<script id="dev-module-toolbar">
     var callbacks = {};
 
     /**
@@ -37,11 +47,11 @@
      * @returns {undefined}
      */
     callbacks.displayPageSpeedScore = function (result) {
-        var text, score = '--';
+        var text, score = '-';
         if (result.score) {
             score = result.score;
         }
-        text = GplCart.text('Google PageSpeed Score: <b>@score</b>', {'@score': score});
+        text = GplCart.text('PageSpeed Score: @score', {'@score': score});
         $('#dev-module-toolbar .summary .pagespeed').append(text);
     };
 
@@ -52,7 +62,7 @@
      */
     callbacks.displayTopPageSpeedSuggestions = function (result) {
 
-        var ul, li, suggestions, text, results = [],
+        var ul, li, suggestions, results = [],
                 ruleResults = result.formattedResults.ruleResults;
 
         for (var i in ruleResults) {
@@ -76,9 +86,6 @@
         } else {
             suggestions = GplCart.text('No high impact suggestions');
         }
-
-        text = ' ' + GplCart.text('Suggestions: <b>@text</b>', {'@text': suggestions});
-        $('#dev-module-toolbar .summary .pagespeed').append(text);
     };
 
     /**
@@ -108,7 +115,7 @@
             if (field in stats) {
                 val = Number(stats[field]);
                 totalBytes += val;
-                if (val > largestSingleCategory){
+                if (val > largestSingleCategory) {
                     largestSingleCategory = val;
                 }
                 labels.push(resources[i].label);
@@ -193,23 +200,91 @@
     }
 
     /**
+     * Check the current page markup with https://validator.w3.org
+     * @returns {undefined}
+     */
+    function checkMarkup() {
+
+        var node, doctype, clone, data, message, type, messages = [], list = '';
+
+        node = document.doctype;
+        doctype = node ? "<!DOCTYPE "
+                + node.name
+                + (node.publicId ? ' PUBLIC "' + node.publicId + '"' : '')
+                + (!node.publicId && node.systemId ? ' SYSTEM' : '')
+                + (node.systemId ? ' "' + node.systemId + '"' : '')
+                + '>\n' : '';
+
+        // Remove all data added by this template
+        clone = $('html').clone();
+        clone.find('#dev-module-toolbar').remove();
+        data = doctype + "<html>" + clone.html() + "</html>";
+
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: 'https://validator.w3.org/nu/?out=json',
+            data: data,
+            cache: false,
+            processData: false,
+            contentType: 'text/html; charset=utf-8',
+            success: function (data) {
+                if (!data.messages) {
+                    return;
+                }
+
+                for (var i in data.messages) {
+                    type = data.messages[i].type;
+                    message = escapeHTML(data.messages[i].message);
+                    list += '<li class="result ' + type + '"><span class="text-muted">' + data.messages[i].lastLine + ':</span> ' + message + '</li>';
+                    if (messages[type] === undefined) {
+                        messages[type] = [];
+                    }
+                    messages[type][i] = message;
+                }
+
+                list = '<ol class="list-unstyled">' + list + '</ol>';
+                $('div#dev-module-toolbar .details .validator .results').html(list);
+
+                for(var type in messages){
+                    $('div#dev-module-toolbar .summary .validator .' + type).text(messages[type].length);
+                }
+            },
+            error: function (e) {
+                console.warn(e.responseText);
+            }
+        });
+    }
+
+    /**
+     * Escape HTML
+     * @param {String} s
+     * @returns {String}
+     */
+    function escapeHTML(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    }
+
+    /**
      * Invoke functions when DOM is ready
      * @returns {undefined}
      */
     $(function () {
-        $('#dev-module-toolbar').click(function () {
-
-            if ($(this).hasClass('slide-up')) {
-                $(this).toggleClass('slide-down', 'slide-up');
+        $('#dev-module-toolbar .toggler').click(function () {
+            var el = $('#dev-module-toolbar');
+            if (el.hasClass('slide-up')) {
+                el.toggleClass('slide-down', 'slide-up');
             } else {
-                $(this).toggleClass('slide-up', 'slide-down');
+                el.toggleClass('slide-up', 'slide-down');
             }
         });
 
         runPagespeed();
+        checkMarkup();
     });
+
 </script>
-<style>
+<style id="dev-module-toolbar">
   #dev-module-toolbar {
       border-top: 1px solid #000;
       position: fixed;
@@ -228,6 +303,14 @@
 
   #dev-module-toolbar .summary {
       line-height: 30px;
+      position: relative;
+      border-bottom: 1px solid #ddd;
+  }
+
+  #dev-module-toolbar .summary .toggler {
+      position: absolute;
+      right: 15px;
+      top: 5px;
   }
 
   #dev-module-toolbar.slide-up {
@@ -238,32 +321,33 @@
       bottom: -270px !important;
   }
 
-  #dev-module-toolbar .summary,
-  #dev-module-toolbar .details {
-      clear: both;
-  }
-
-  #dev-module-toolbar .column {
-      position: relative;
-      min-height: 1px;
-      padding-right: 15px;
-      padding-left: 15px;
-  }
-
-  @media (min-width: 992px) {
-      #dev-module-toolbar .column {
-          width: 50%;
-          float: left;
-      }
-  }
-
-  #dev-module-toolbar .details .queries ul {
+  #dev-module-toolbar .scroll {
       list-style: none;
-      padding: 0;
+      padding: 10px 0 0 0;
       margin: 0;
       height:250px;
-      overflow:hidden;
-      overflow-y:scroll;
+      overflow-y:auto;
+  }
+
+  #dev-module-toolbar .result.error {
+      color: red;
+  }
+
+  #dev-module-toolbar .result.warning {
+      color: orange;
+  }
+
+  #dev-module-toolbar ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+  }
+
+  #dev-module-toolbar ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+  }
+
+  #dev-module-toolbar ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.5);
   }
 </style>
 
