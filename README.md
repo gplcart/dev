@@ -5,8 +5,12 @@ Dev is a [GPL Cart](https://github.com/gplcart/gplcart) module that provides a s
 
 **Features**
 
-- Kint - a powerful and modern PHP debugging tool
-- Page toolbar that shows SQL queries on the page, script execution time and  results of [PageSpeed Insights](https://developers.google.com/speed/docs/insights/about) test
+- Kint - a powerful and modern PHP debugging tool. Use `d()` instead of `print_r()`
+- Page toolbar that shows:
+  - SQL queries on the page
+  - page execution time
+  - results of [PageSpeed Insights](https://developers.google.com/speed/docs/insights/about) test
+  - markup errors from W3C Validator
 
 **Installation**
 
