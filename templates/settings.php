@@ -23,7 +23,7 @@
       <div class="form-group">
         <label class="col-md-2 control-label"><?php echo $this->text('API key'); ?></label>
         <div class="col-md-6">
-          <input name="settings[key]" class="form-control" value="<?php echo $this->escape($settings['key']); ?>">
+          <input name="settings[key]" class="form-control" value="<?php echo $this->e($settings['key']); ?>">
           <div class="help-block"><?php echo $this->text('If you want to use PageSpeed Insights test, please specify an <a href="https://developers.google.com/console/help/generating-dev-keys">API key</a> to be included with each request'); ?></div>
         </div>
       </div>
