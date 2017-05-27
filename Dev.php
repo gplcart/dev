@@ -55,34 +55,34 @@ class Dev extends Module
     }
 
     /**
-     * Implements hook "destruct"
+     * Implements hook "destruct.controller"
+     * @param \gplcart\core\Controller $controller
      */
-    public function hookDestruct()
+    public function hookDestructController($controller)
     {
-        $disabled = !empty($_POST)//
-                || (isset($_SERVER['HTTP_X_REQUESTED_WITH'])//
-                && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+        $disabled = $controller->isPosted() || $controller->isAjax();
 
         if (!$disabled && $this->config->module('dev', 'status')) {
-            $this->outputToolbar();
+            $this->outputToolbar($controller);
         }
     }
 
     /**
      * Render and print dev toolbar
+     * @param \gplcart\core\Controller $controller
      */
-    protected function outputToolbar()
+    protected function outputToolbar($controller)
     {
         /* @var $db \gplcart\core\Database */
         $db = $this->config->getDb();
 
-        $queries = $db->getLogs();
-        $time = microtime(true) - GC_START;
-        $key = $this->config->module('dev', 'key');
+        $data = array(
+            'queries' => $db->getLogs(),
+            'time' => microtime(true) - GC_START,
+            'key' => $this->config->module('dev', 'key')
+        );
 
-        ob_start();
-        include __DIR__ . '/templates/toolbar.php';
-        echo ob_get_clean();
+        echo $controller->render('dev|toolbar', $data);
     }
 
     /**
