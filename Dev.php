@@ -50,7 +50,7 @@ class Dev extends Module
     {
         $settings = $this->config->module('dev');
 
-        if (!empty($settings['status']) && !empty($settings['key']) && !$object->isBackend()) {
+        if (!empty($settings['status'])) {
             $object->setJsSettings('dev', array('key' => $settings['key']));
             $object->setJs('system/modules/dev/js/common.js', array('position' => 'bottom'));
             $object->setCss('system/modules/dev/css/common.css');
@@ -64,11 +64,13 @@ class Dev extends Module
      */
     public function hookTemplateOutput(&$html, $controller)
     {
-        if ($this->config->module('dev', 'status')) {
+        $settings = $this->config->module('dev');
+
+        if (!empty($settings['status'])) {
 
             $data = array(
+                'key' => $settings['key'],
                 'time' => microtime(true) - GC_START,
-                'key' => $this->config->module('dev', 'key'),
                 'queries' => $this->config->getDb()->getLogs()
             );
 

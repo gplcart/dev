@@ -155,7 +155,7 @@
                 + (node.publicId ? ' PUBLIC "' + node.publicId + '"' : '')
                 + (!node.publicId && node.systemId ? ' SYSTEM' : '')
                 + (node.systemId ? ' "' + node.systemId + '"' : '')
-                + '>\n' : '';
+                + '>' : '';
 
         $.ajax({
             type: "POST",
@@ -186,9 +186,6 @@
                 for (var type in messages) {
                     $('div#dev-module-toolbar .summary .validator .' + type).text(messages[type].length);
                 }
-            },
-            error: function (e) {
-                console.warn(e.responseText);
             }
         });
     };

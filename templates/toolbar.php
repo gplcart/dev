@@ -12,7 +12,7 @@
       <?php echo $this->text('SQL queries: @queries Execution time: @time sec', array('@queries' => count($queries), '@time' => $time)); ?>
     </div>
     <div class="col-md-3 validator">
-      <?php echo $this->text('Markup errors: <span class="result error">@count</span>', array('@count' => 0)); ?>
+      <?php echo $this->text('Markup errors: <span class="result error">-</span>'); ?>
     </div>
     <div class="col-md-3 pagespeed">
       <?php if (empty($key)) { ?>
