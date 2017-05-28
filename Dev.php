@@ -49,40 +49,32 @@ class Dev extends Module
     public function hookConstructController($object)
     {
         $settings = $this->config->module('dev');
+
         if (!empty($settings['status']) && !empty($settings['key']) && !$object->isBackend()) {
             $object->setJsSettings('dev', array('key' => $settings['key']));
+            $object->setJs('system/modules/dev/js/common.js', array('position' => 'bottom'));
+            $object->setCss('system/modules/dev/css/common.css');
         }
     }
 
     /**
-     * Implements hook "destruct.controller"
+     * Implements hook "template.output"
+     * @param string $html
      * @param \gplcart\core\Controller $controller
      */
-    public function hookDestructController($controller)
+    public function hookTemplateOutput(&$html, $controller)
     {
-        $disabled = $controller->isPosted() || $controller->isAjax();
+        if ($this->config->module('dev', 'status')) {
 
-        if (!$disabled && $this->config->module('dev', 'status')) {
-            $this->outputToolbar($controller);
+            $data = array(
+                'time' => microtime(true) - GC_START,
+                'key' => $this->config->module('dev', 'key'),
+                'queries' => $this->config->getDb()->getLogs()
+            );
+
+            $toolbar = $controller->render('dev|toolbar', $data);
+            $html = substr_replace($html, $toolbar, strpos($html, '</body>'), 0);
         }
-    }
-
-    /**
-     * Render and print dev toolbar
-     * @param \gplcart\core\Controller $controller
-     */
-    protected function outputToolbar($controller)
-    {
-        /* @var $db \gplcart\core\Database */
-        $db = $this->config->getDb();
-
-        $data = array(
-            'queries' => $db->getLogs(),
-            'time' => microtime(true) - GC_START,
-            'key' => $this->config->module('dev', 'key')
-        );
-
-        echo $controller->render('dev|toolbar', $data);
     }
 
     /**

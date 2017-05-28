@@ -1,0 +1,64 @@
+#dev-module-toolbar {
+    border-top: 1px solid #000;
+    position: fixed;
+    z-index: 10000;
+    height: 300px;
+    background-color: #fff;
+    right: 0;
+    left: 0;
+    width: 100%;
+    bottom: -270px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#dev-module-toolbar .summary {
+    line-height: 30px;
+    position: relative;
+    border-bottom: 1px solid #ddd;
+}
+
+#dev-module-toolbar .summary .toggler {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+}
+
+#dev-module-toolbar.slide-up {
+    bottom: 0px !important;
+}
+
+#dev-module-toolbar.slide-down {
+    bottom: -270px !important;
+}
+
+#dev-module-toolbar .scroll {
+    list-style: none;
+    padding: 10px 0 0 0;
+    margin: 0;
+    height:250px;
+    overflow-y:auto;
+}
+
+#dev-module-toolbar .result.error {
+    color: red;
+}
+
+#dev-module-toolbar .result.warning {
+    color: orange;
+}
+
+#dev-module-toolbar ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+#dev-module-toolbar ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#dev-module-toolbar ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+}
