@@ -26,25 +26,35 @@ class Dev extends Module
     }
 
     /**
+     * Implements hook "module.install.before"
+     */
+    public function hookModuleInstallBefore(&$result)
+    {
+        if (!is_file($this->getKintFile())) {
+            $result = $this->getLanguage()->text('Kint file not found');
+        }
+    }
+
+    /**
      * Implements hook "construct"
      */
     public function hookConstruct()
     {
-        require __DIR__ . '/vendor/kint-php/kint/init.php';
+        require_once $this->getKintFile();
     }
 
     /**
      * Implements hook "construct.controller"
-     * @param \gplcart\core\Controller $object
+     * @param \gplcart\core\Controller $controller
      */
-    public function hookConstructController($object)
+    public function hookConstructController($controller)
     {
         $settings = $this->config->module('dev');
 
         if (!empty($settings['status'])) {
-            $object->setJsSettings('dev', array('key' => $settings['key']));
-            $object->setJs('system/modules/dev/js/common.js', array('position' => 'bottom'));
-            $object->setCss('system/modules/dev/css/common.css');
+            $controller->setJsSettings('dev', array('key' => $settings['key']));
+            $controller->setJs('system/modules/dev/js/common.js', array('position' => 'bottom'));
+            $controller->setCss('system/modules/dev/css/common.css');
         }
     }
 
@@ -134,6 +144,15 @@ class Dev extends Module
     public function hookModuleUninstallAfter()
     {
         $this->getLibrary()->clearCache();
+    }
+
+    /**
+     * Returns a path to Kint's init file
+     * @return string
+     */
+    protected function getKintFile()
+    {
+        return __DIR__ . '/vendor/kint-php/kint/init.php';
     }
 
 }
