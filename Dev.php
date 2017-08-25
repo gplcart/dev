@@ -53,8 +53,8 @@ class Dev extends Module
 
         if (!empty($settings['status'])) {
             $controller->setJsSettings('dev', array('key' => $settings['key']));
-            $controller->setJs('system/modules/dev/js/common.js', array('position' => 'bottom'));
-            $controller->setCss('system/modules/dev/css/common.css');
+            $controller->setJs($this->getAsset('dev', 'common.js'), array('position' => 'bottom'));
+            $controller->setCss($this->getAsset('dev', 'common.css'));
         }
     }
 
