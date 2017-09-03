@@ -27,7 +27,7 @@
 }
 
 #dev-module-toolbar.slide-up {
-    bottom: 0px !important;
+    bottom: 0 !important;
 }
 
 #dev-module-toolbar.slide-down {

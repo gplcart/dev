@@ -31,10 +31,10 @@
      */
     GplCart.modules.dev.callbacks.displayTopPageSpeedSuggestions = function (result) {
 
-        var ul, li, suggestions, results = [],
+        var i, len, ul, li, suggestions, results = [],
                 ruleResults = result.formattedResults.ruleResults;
 
-        for (var i in ruleResults) {
+        for (i in ruleResults) {
             if (ruleResults[i].ruleImpact >= 3.0) {
                 results.push({name: ruleResults[i].localizedRuleName, impact: ruleResults[i].ruleImpact});
             }
@@ -43,7 +43,7 @@
         results.sort(sortByImpact);
         ul = document.createElement('ul');
 
-        for (var i = 0, len = results.length; i < len; ++i) {
+        for (i = 0, len = results.length; i < len; ++i) {
             li = document.createElement('li');
             li.innerHTML = results[i].name;
             ul.insertBefore(li, null);
