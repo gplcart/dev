@@ -50,11 +50,13 @@
         }
 
         if (ul.hasChildNodes()) {
-            suggestions = results.length;
-            $('#dev-module-toolbar .details .pagespeed .suggestions').html(ul);
+            suggestions = ul;
         } else {
+            // noinspection JSCheckFunctionSignatures
             suggestions = GplCart.text('No high impact suggestions');
         }
+
+        $('#dev-module-toolbar .details .pagespeed .suggestions').html(suggestions);
     };
 
     /**
@@ -74,7 +76,7 @@
             {label: 'HTML', field: 'htmlResponseBytes', color: '43c121'},
             {label: 'Flash', field: 'flashResponseBytes', color: 'f8ce44'},
             {label: 'Text', field: 'textResponseBytes', color: 'ad6bc5'},
-            {label: 'Other', field: 'otherResponseBytes', color: '1051e8'},
+            {label: 'Other', field: 'otherResponseBytes', color: '1051e8'}
         ];
 
         for (var i = 0, len = resources.length; i < len; ++i) {
@@ -102,7 +104,7 @@
             'chdl=' + labels.join('|'),
             'chdls=000000,14',
             'chp=1.6',
-            'chds=0,' + largestSingleCategory,
+            'chds=0,' + largestSingleCategory
         ].join('&');
 
         image = '<img src="http://chart.apis.google.com/chart?' + query + '">';
