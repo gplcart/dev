@@ -27,6 +27,7 @@ class Dev extends Module
 
     /**
      * Implements hook "module.install.before"
+     * @param null|string $result
      */
     public function hookModuleInstallBefore(&$result)
     {
