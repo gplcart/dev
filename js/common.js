@@ -4,23 +4,23 @@
  * @copyright Copyright (c) 2015, Iurii Makukh
  * @license https://www.gnu.org/licenses/gpl.html GNU/GPLv3
  */
-(function (document, $, GplCart) {
+(function (document, $, Gplcart) {
 
     "use strict";
 
-    GplCart.modules.dev = {callbacks: {}};
+    Gplcart.modules.dev = {callbacks: {}};
 
     /**
      * Shows the PageSpeed score for the page being analyzed
      * @param {Object} result
      * @returns {undefined}
      */
-    GplCart.modules.dev.callbacks.displayPageSpeedScore = function (result) {
+    Gplcart.modules.dev.callbacks.displayPageSpeedScore = function (result) {
         var text, score = '-';
         if (result.score) {
             score = result.score;
         }
-        text = GplCart.text('PageSpeed Score: @score', {'@score': score});
+        text = Gplcart.text('PageSpeed Score: @score', {'@score': score});
         $('#dev-module-toolbar .summary .pagespeed').append(text);
     };
 
@@ -29,7 +29,7 @@
      * @param {Object} result
      * @returns {undefined}
      */
-    GplCart.modules.dev.callbacks.displayTopPageSpeedSuggestions = function (result) {
+    Gplcart.modules.dev.callbacks.displayTopPageSpeedSuggestions = function (result) {
 
         var i, len, ul, li, suggestions, results = [],
                 ruleResults = result.formattedResults.ruleResults;
@@ -53,7 +53,7 @@
             suggestions = ul;
         } else {
             // noinspection JSCheckFunctionSignatures
-            suggestions = GplCart.text('No high impact suggestions');
+            suggestions = Gplcart.text('No high impact suggestions');
         }
 
         $('#dev-module-toolbar .details .pagespeed .suggestions').html(suggestions);
@@ -64,7 +64,7 @@
      * @param {Object} result
      * @returns {undefined}
      */
-    GplCart.modules.dev.callbacks.displayResourceSizeBreakdown = function (result) {
+    Gplcart.modules.dev.callbacks.displayResourceSizeBreakdown = function (result) {
 
         var field, val, stats = result.pageStats, labels = [],
                 data = [], colors = [], totalBytes = 0, largestSingleCategory = 0, query, image;
@@ -118,14 +118,14 @@
      */
     var runPagespeed = function () {
         var script, query;
-        if (GplCart.settings.dev && GplCart.settings.dev.key) {
+        if (Gplcart.settings.dev && Gplcart.settings.dev.key) {
             script = document.createElement('script');
             script.type = 'text/javascript';
             script.async = true;
             query = [
                 'url=' + 'https://developers.google.com/speed/pagespeed/insights/',
                 'callback=runPagespeedCallbacks',
-                'key=' + GplCart.settings.dev.key
+                'key=' + Gplcart.settings.dev.key
             ].join('&');
             script.src = 'https://www.googleapis.com/pagespeedonline/v2/runPagespeed?' + query;
             document.head.insertBefore(script, null);
@@ -205,7 +205,7 @@
      * Invoke functions when DOM is ready
      * @returns {undefined}
      */
-    GplCart.onload.setupDevToolbar = function () {
+    Gplcart.onload.setupDevToolbar = function () {
 
         $('#dev-module-toolbar .toggler').click(function () {
             var el = $('#dev-module-toolbar');
@@ -220,7 +220,7 @@
         checkMarkup();
     };
 
-})(document, jQuery, GplCart);
+})(document, jQuery, Gplcart);
 
 /**
  * Our JSONP callback. Checks for errors, then invokes our callback handlers
@@ -229,7 +229,7 @@
  */
 function runPagespeedCallbacks(result) {
 
-    /* global GplCart */
+    /* global Gplcart */
 
     var errors, f, fn;
 
@@ -243,10 +243,10 @@ function runPagespeedCallbacks(result) {
             }
         }
     } else {
-        for (fn in GplCart.modules.dev.callbacks) {
-            f = GplCart.modules.dev.callbacks[fn];
+        for (fn in Gplcart.modules.dev.callbacks) {
+            f = Gplcart.modules.dev.callbacks[fn];
             if (typeof f === 'function') {
-                GplCart.modules.dev.callbacks[fn](result);
+                Gplcart.modules.dev.callbacks[fn](result);
             }
         }
     }
