@@ -1,7 +1,7 @@
 {
     "name": "gplcart/dev",
     "type": "gplcart-module",
-    "description": "A set of tools to make developing GPL Cart sites easier",
+    "description": "A set of tools to make developing GPLCart sites easier",
     "keywords": ["gplcart", "ecommerce", "shopping cart", "gplcart module", "php", "kint", "pagespeed insights"],
     "license": "GPL-3.0+",
     "require": {
