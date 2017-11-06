@@ -9,7 +9,8 @@
 
 namespace gplcart\modules\dev;
 
-use gplcart\core\Module;
+use gplcart\core\Module,
+    gplcart\core\Config;
 
 /**
  * Main class for Dev module
@@ -18,11 +19,11 @@ class Dev extends Module
 {
 
     /**
-     * Constructor
+     * @param Config $config
      */
-    public function __construct()
+    public function __construct(Config $config)
     {
-        parent::__construct();
+        parent::__construct($config);
     }
 
     /**
@@ -50,7 +51,7 @@ class Dev extends Module
      */
     public function hookConstructController($controller)
     {
-        $settings = $this->config->module('dev');
+        $settings = $this->config->getFromModule('dev');
 
         if (!empty($settings['status'])) {
             $controller->setJsSettings('dev', array('key' => $settings['key']));
@@ -66,7 +67,7 @@ class Dev extends Module
      */
     public function hookTemplateOutput(&$html, $controller)
     {
-        $settings = $this->config->module('dev');
+        $settings = $this->config->getFromModule('dev');
 
         if (!empty($settings['status'])) {
 
