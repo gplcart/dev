@@ -51,13 +51,7 @@ class Dev extends Module
      */
     public function hookConstructController($controller)
     {
-        $settings = $this->config->getFromModule('dev');
-
-        if (!empty($settings['status'])) {
-            $controller->setJsSettings('dev', array('key' => $settings['key']));
-            $controller->setJs($this->getAsset('dev', 'common.js'), array('position' => 'bottom'));
-            $controller->setCss($this->getAsset('dev', 'common.css'));
-        }
+        $this->setModuleAssets($controller);
     }
 
     /**
@@ -67,19 +61,7 @@ class Dev extends Module
      */
     public function hookTemplateOutput(&$html, $controller)
     {
-        $settings = $this->config->getFromModule('dev');
-
-        if (!empty($settings['status'])) {
-
-            $data = array(
-                'key' => $settings['key'],
-                'time' => microtime(true) - GC_START,
-                'queries' => $this->config->getDb()->getLogs()
-            );
-
-            $toolbar = $controller->render('dev|toolbar', $data);
-            $html = substr_replace($html, $toolbar, strpos($html, '</body>'), 0);
-        }
+        $this->setDevToolbar($html, $controller);
     }
 
     /**
@@ -152,9 +134,48 @@ class Dev extends Module
      * Returns a path to Kint's init file
      * @return string
      */
-    protected function getKintFile()
+    public function getKintFile()
     {
         return __DIR__ . '/vendor/kint-php/kint/init.php';
+    }
+
+    /**
+     * Sets module specific assets
+     * @param \gplcart\core\Controller $controller
+     */
+    protected function setModuleAssets($controller)
+    {
+        if (!$controller->isInternalRoute()) {
+            $settings = $this->config->getFromModule('dev');
+            if (!empty($settings['status'])) {
+                $controller->setJsSettings('dev', array('key' => $settings['key']));
+                $controller->setJs($this->getAsset('dev', 'common.js'), array('position' => 'bottom'));
+                $controller->setCss($this->getAsset('dev', 'common.css'));
+            }
+        }
+    }
+
+    /**
+     * Adds toolbar
+     * @param string $html
+     * @param \gplcart\core\Controller $controller
+     */
+    protected function setDevToolbar(&$html, $controller)
+    {
+        if (!$controller->isInternalRoute()) {
+            $settings = $this->config->getFromModule('dev');
+            if (!empty($settings['status'])) {
+
+                $data = array(
+                    'key' => $settings['key'],
+                    'time' => microtime(true) - GC_START,
+                    'queries' => $this->config->getDb()->getLogs()
+                );
+
+                $toolbar = $controller->render('dev|toolbar', $data);
+                $html = substr_replace($html, $toolbar, strpos($html, '</body>'), 0);
+            }
+        }
     }
 
 }
