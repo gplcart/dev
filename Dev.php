@@ -10,31 +10,43 @@
 namespace gplcart\modules\dev;
 
 use gplcart\core\Module,
-    gplcart\core\Config;
+    gplcart\core\Config,
+    gplcart\core\Library;
 
 /**
  * Main class for Dev module
  */
-class Dev extends Module
+class Dev
 {
 
     /**
-     * @param Config $config
+     * Database class instance
+     * @var \gplcart\core\Database $db
      */
-    public function __construct(Config $config)
-    {
-        parent::__construct($config);
-    }
+    protected $db;
 
     /**
-     * Implements hook "module.install.before"
-     * @param null|string $result
+     * Module class instance
+     * @var \gplcart\core\Module $module
      */
-    public function hookModuleInstallBefore(&$result)
+    protected $module;
+
+    /**
+     * Library class instance
+     * @var \gplcart\core\Library $library
+     */
+    protected $library;
+
+    /**
+     * @param Config $config
+     * @param Module $module
+     * @param Library $library
+     */
+    public function __construct(Config $config, Module $module, Library $library)
     {
-        if (!is_file($this->getKintFile())) {
-            $result = $this->getLanguage()->text('Kint file not found');
-        }
+        $this->module = $module;
+        $this->library = $library;
+        $this->db = $config->getDb();
     }
 
     /**
@@ -103,7 +115,7 @@ class Dev extends Module
      */
     public function hookModuleEnableAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -111,7 +123,7 @@ class Dev extends Module
      */
     public function hookModuleDisableAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -119,7 +131,7 @@ class Dev extends Module
      */
     public function hookModuleInstallAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -127,7 +139,7 @@ class Dev extends Module
      */
     public function hookModuleUninstallAfter()
     {
-        $this->getLibrary()->clearCache();
+        $this->library->clearCache();
     }
 
     /**
@@ -146,11 +158,11 @@ class Dev extends Module
     protected function setModuleAssets($controller)
     {
         if (!$controller->isInternalRoute()) {
-            $settings = $this->config->getFromModule('dev');
+            $settings = $this->module->getSettings('dev');
             if (!empty($settings['status'])) {
                 $controller->setJsSettings('dev', array('key' => $settings['key']));
-                $controller->setJs($this->getAsset('dev', 'common.js'), array('position' => 'bottom'));
-                $controller->setCss($this->getAsset('dev', 'common.css'));
+                $controller->setJs(__DIR__ . '/js/common.js', array('position' => 'bottom'));
+                $controller->setCss(__DIR__ . '/css/common.css');
             }
         }
     }
@@ -163,13 +175,13 @@ class Dev extends Module
     protected function setDevToolbar(&$html, $controller)
     {
         if (!$controller->isInternalRoute()) {
-            $settings = $this->config->getFromModule('dev');
+            $settings = $this->module->getSettings('dev');
             if (!empty($settings['status'])) {
 
                 $data = array(
                     'key' => $settings['key'],
                     'time' => microtime(true) - GC_START,
-                    'queries' => $this->config->getDb()->getLogs()
+                    'queries' => $this->db->getLogs()
                 );
 
                 $toolbar = $controller->render('dev|toolbar', $data);
