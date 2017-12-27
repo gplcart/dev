@@ -9,14 +9,14 @@
 
 namespace gplcart\modules\dev;
 
-use gplcart\core\Module,
-    gplcart\core\Config,
-    gplcart\core\Library;
+use gplcart\core\Config,
+    gplcart\core\Library,
+    gplcart\core\Module as CoreModule;
 
 /**
  * Main class for Dev module
  */
-class Dev
+class Module
 {
 
     /**
@@ -39,10 +39,10 @@ class Dev
 
     /**
      * @param Config $config
-     * @param Module $module
      * @param Library $library
+     * @param CoreModule $module
      */
-    public function __construct(Config $config, Module $module, Library $library)
+    public function __construct(Config $config, Library $library, CoreModule $module)
     {
         $this->module = $module;
         $this->library = $library;
