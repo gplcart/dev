@@ -19,6 +19,16 @@
     </div>
   </div>
   <div class="form-group">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="checkbox">
+        <label>
+          <input name="settings[exception]" type="checkbox"<?php echo empty($settings["exception"]) ? '' : ' checked'; ?>> <?php echo $this->text('Convert errors to exceptions'); ?>
+        </label>
+      </div>
+      <div class="help-block"><?php echo $this->text('If select all PHP errors will be converted to PHP exceptions. Should be disabled in production!'); ?></div>
+    </div>
+  </div>
+  <div class="form-group">
     <label class="col-md-2 control-label"><?php echo $this->text('API key'); ?></label>
     <div class="col-md-4">
       <input name="settings[key]" class="form-control" value="<?php echo $this->e($settings['key']); ?>">
