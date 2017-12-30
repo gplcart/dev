@@ -9,15 +9,23 @@
 
 namespace gplcart\modules\dev;
 
-use gplcart\core\Config,
+use gplcart\core\Logger,
+    gplcart\core\Config,
     gplcart\core\Library,
     gplcart\core\Module as CoreModule;
+use gplcart\core\exceptions\Dependency as DependencyException;
 
 /**
  * Main class for Dev module
  */
 class Module
 {
+
+    /**
+     * Config class instance
+     * @var \gplcart\core\Config
+     */
+    protected $config;
 
     /**
      * Database class instance
@@ -38,15 +46,24 @@ class Module
     protected $library;
 
     /**
+     * Logger class instance
+     * @var \gplcart\core\Logger $logger
+     */
+    protected $logger;
+
+    /**
+     * @param Logger $logger
      * @param Config $config
      * @param Library $library
      * @param CoreModule $module
      */
-    public function __construct(Config $config, Library $library, CoreModule $module)
+    public function __construct(Logger $logger, Config $config, Library $library, CoreModule $module)
     {
         $this->module = $module;
+        $this->logger = $logger;
+        $this->config = $config;
         $this->library = $library;
-        $this->db = $config->getDb();
+        $this->db = $this->config->getDb();
     }
 
     /**
@@ -54,6 +71,7 @@ class Module
      */
     public function hookConstruct()
     {
+        $this->setLogger();
         require_once $this->getKintFile();
     }
 
@@ -148,7 +166,13 @@ class Module
      */
     public function getKintFile()
     {
-        return __DIR__ . '/vendor/kint-php/kint/init.php';
+        $file = __DIR__ . '/vendor/kint-php/kint/init.php';
+
+        if (is_file($file)) {
+            return $file;
+        }
+
+        throw new DependencyException("Kint file $file not found");
     }
 
     /**
@@ -188,6 +212,18 @@ class Module
                 $html = substr_replace($html, $toolbar, strpos($html, '</body>'), 0);
             }
         }
+    }
+
+    /**
+     * Configure system logger
+     */
+    protected function setLogger()
+    {
+        $settings = $this->module->getSettings('dev');
+
+        $this->logger->printError(!empty($settings['print_error']))
+                ->errorToException(!empty($settings['error_to_exception']))
+                ->printBacktrace(!empty($settings['print_error_backtrace']));
     }
 
 }

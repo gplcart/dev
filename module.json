@@ -8,6 +8,9 @@
     "configure": "admin/module/settings/dev",
     "settings": {
         "key": "",
-        "status": false
+        "status": false,
+        "print_error": false,
+        "error_to_exception": false,
+        "print_error_backtrace": false
     }
 }

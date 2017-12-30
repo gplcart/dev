@@ -33,21 +33,10 @@ class Settings extends BackendController
         $this->setTitleEditSettings();
         $this->setBreadcrumbEditSettings();
 
-        $this->setData('settings', $this->getDevModuleSettings());
+        $this->setData('settings', $this->getModuleSettings('dev'));
 
         $this->submitSettings();
         $this->outputEditSettings();
-    }
-
-    /**
-     * Returns an array of module settings
-     * @return array
-     */
-    protected function getDevModuleSettings()
-    {
-        $settings = $this->getModuleSettings('dev');
-        $settings['exception'] = $this->config('error_to_exception', false);
-        return $settings;
     }
 
     /**
@@ -103,12 +92,7 @@ class Settings extends BackendController
     protected function updateSettings()
     {
         $this->controlAccess('module_edit');
-
-        $submitted = $this->getSubmitted();
-        $this->config->set('error_to_exception', !empty($submitted['exception']));
-        unset($submitted['exception']);
-
-        $this->module->setSettings('dev', $submitted);
+        $this->module->setSettings('dev', $this->getSubmitted());
         $this->redirect('', $this->text('Settings have been updated'), 'success');
     }
 
