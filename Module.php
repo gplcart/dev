@@ -22,12 +22,6 @@ class Module
 {
 
     /**
-     * Config class instance
-     * @var \gplcart\core\Config
-     */
-    protected $config;
-
-    /**
      * Database class instance
      * @var \gplcart\core\Database $db
      */
@@ -61,9 +55,8 @@ class Module
     {
         $this->module = $module;
         $this->logger = $logger;
-        $this->config = $config;
         $this->library = $library;
-        $this->db = $this->config->getDb();
+        $this->db = $config->getDb();
     }
 
     /**
@@ -205,7 +198,7 @@ class Module
                 $data = array(
                     'key' => $settings['key'],
                     'time' => microtime(true) - GC_START,
-                    'queries' => $this->db->getLogs()
+                    'queries' => $this->db->getExecutedQueries()
                 );
 
                 $toolbar = $controller->render('dev|toolbar', $data);
