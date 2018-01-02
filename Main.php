@@ -9,16 +9,16 @@
 
 namespace gplcart\modules\dev;
 
-use gplcart\core\Logger,
+use gplcart\core\Module,
+    gplcart\core\Logger,
     gplcart\core\Config,
-    gplcart\core\Library,
-    gplcart\core\Module as CoreModule;
+    gplcart\core\Library;
 use gplcart\core\exceptions\Dependency as DependencyException;
 
 /**
  * Main class for Dev module
  */
-class Module
+class Main
 {
 
     /**
@@ -49,9 +49,9 @@ class Module
      * @param Logger $logger
      * @param Config $config
      * @param Library $library
-     * @param CoreModule $module
+     * @param Module $module
      */
-    public function __construct(Logger $logger, Config $config, Library $library, CoreModule $module)
+    public function __construct(Logger $logger, Config $config, Library $library, Module $module)
     {
         $this->module = $module;
         $this->logger = $logger;
