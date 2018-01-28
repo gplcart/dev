@@ -1,12 +1,20 @@
 {
-    "name": "gplcart/dev",
-    "type": "gplcart-module",
-    "description": "A set of tools to make developing GPLCart sites easier",
-    "keywords": ["gplcart", "ecommerce", "shopping cart", "gplcart module", "php", "kint", "pagespeed insights"],
-    "license": "GPL-3.0+",
-    "require": {
-        "gplcart/composer-module-installer": "*"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+  "name": "gplcart/dev",
+  "type": "gplcart-module",
+  "description": "A set of tools to make developing GPLCart sites easier",
+  "keywords": [
+    "gplcart",
+    "ecommerce",
+    "shopping cart",
+    "gplcart module",
+    "php",
+    "kint",
+    "pagespeed insights"
+  ],
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "gplcart/composer-module-installer": "*"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
