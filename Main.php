@@ -114,7 +114,7 @@ class Main
     public function hookRouteList(array &$routes)
     {
         $routes['admin/module/settings/dev'] = array(
-            'access' => '__superadmin',
+            'access' => '_superadmin',
             'handlers' => array(
                 'controller' => array('gplcart\\modules\\dev\\controllers\\Settings', 'editSettings')
             )
