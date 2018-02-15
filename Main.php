@@ -9,11 +9,11 @@
 
 namespace gplcart\modules\dev;
 
-use gplcart\core\Module,
-    gplcart\core\Logger,
-    gplcart\core\Config,
-    gplcart\core\Library;
-use gplcart\core\exceptions\Dependency as DependencyException;
+use gplcart\core\Config;
+use gplcart\core\Library;
+use gplcart\core\Logger;
+use gplcart\core\Module;
+use RuntimeException;
 
 /**
  * Main class for Dev module
@@ -114,7 +114,7 @@ class Main
     public function hookRouteList(array &$routes)
     {
         $routes['admin/module/settings/dev'] = array(
-            'access' => '_superadmin',
+            'access' => GC_PERM_SUPERADMIN,
             'handlers' => array(
                 'controller' => array('gplcart\\modules\\dev\\controllers\\Settings', 'editSettings')
             )
@@ -165,7 +165,7 @@ class Main
             return $file;
         }
 
-        throw new DependencyException("Kint file $file not found");
+        throw new RuntimeException("Kint file $file not found");
     }
 
     /**
@@ -215,8 +215,8 @@ class Main
         $settings = $this->module->getSettings('dev');
 
         $this->logger->printError(!empty($settings['print_error']))
-                ->errorToException(!empty($settings['error_to_exception']))
-                ->printBacktrace(!empty($settings['print_error_backtrace']));
+            ->errorToException(!empty($settings['error_to_exception']))
+            ->printBacktrace(!empty($settings['print_error_backtrace']));
     }
 
 }
