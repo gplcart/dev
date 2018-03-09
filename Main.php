@@ -65,7 +65,7 @@ class Main
     public function hookConstruct()
     {
         $this->setLogger();
-        require_once $this->getKintFile();
+        $this->loadLibrary();
     }
 
     /**
@@ -96,13 +96,15 @@ class Main
         $libraries['kint'] = array(
             'name' => 'Kint',
             'description' => 'A powerful and modern PHP debugging tool',
-            'url' => 'https://github.com/raveren/kint',
-            'download' => 'https://github.com/kint-php/kint/archive/2.0-alpha4.zip',
+            'url' => 'https://github.com/kint-php/kint',
+            'download' => 'https://github.com/kint-php/kint/archive/2.2.zip',
             'type' => 'php',
-            'version' => '2.0-alpha4',
+            'vendor' => 'kint-php/kint',
+            'version' => '2.2',
             'module' => 'dev',
             'files' => array(
-                'vendor/kint-php/kint/init.php'
+                GC_FILE_AUTOLOAD,
+                'init.php'
             )
         );
     }
@@ -156,16 +158,15 @@ class Main
     /**
      * Returns a path to Kint's init file
      * @return string
+     * @throws RuntimeException
      */
-    public function getKintFile()
+    public function loadLibrary()
     {
-        $file = __DIR__ . '/vendor/kint-php/kint/init.php';
+        $this->library->load('kint');
 
-        if (is_file($file)) {
-            return $file;
+        if (!class_exists('Kint')) {
+            throw new RuntimeException('Kint library not found');
         }
-
-        throw new RuntimeException("Kint file $file not found");
     }
 
     /**
@@ -175,7 +176,9 @@ class Main
     protected function setModuleAssets($controller)
     {
         if (!$controller->isInternalRoute()) {
+
             $settings = $this->module->getSettings('dev');
+
             if (!empty($settings['status'])) {
                 $controller->setJsSettings('dev', array('key' => $settings['key']));
                 $controller->setJs(__DIR__ . '/js/common.js', array('position' => 'bottom'));
@@ -192,7 +195,9 @@ class Main
     protected function setDevToolbar(&$html, $controller)
     {
         if (!$controller->isInternalRoute()) {
+
             $settings = $this->module->getSettings('dev');
+
             if (!empty($settings['status'])) {
 
                 $data = array(
